@@ -4,3 +4,9 @@ export function getContent () {
     url: '/content/info/get'
   })
 }
+
+export function getStatus () {
+  return request({
+    url: '/content/info?status'
+  })
+}

@@ -8,39 +8,38 @@
       <el-button type="success" size="medium" @click="dialogVisible = true">添加素材</el-button>
     </div>
     <el-row :gutter="20" v-if="isshow">
-      <el-col :span="4" v-for="(item, index) in imgs" :key="index">
+      <el-col :span="4" :sm="6" :md="4" v-for="(item, index) in imgs" :key="index">
         <el-image
           :src="item.images"
           fit="cover">
         </el-image>
         <div class="img-icon">
-          <i :class="item.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
-          <i class="el-icon-delete"></i>
+          <i :class="item.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'" @click="starClick(item)"></i>
+          <i class="el-icon-delete" @click="deleteImgClick(index)"></i>
         </div>
       </el-col>
     </el-row>
     <el-row :gutter="20"  v-else>
-      <el-col :span="4" v-for="(item, index) in Cimgs" :key="index">
+      <el-col :span="4" :sm="6" :md="4" v-for="(item, index) in Cimgs" :key="index">
         <el-image
           :src="item.imgs"
           fit="cover">
         </el-image>
         <div class="img-icon">
           <i class="el-icon-star-on"></i>
-          <i class="el-icon-delete"></i>
+          <i class="el-icon-delete" @click="deleteCimgClick(index)"></i>
         </div>
       </el-col>
-
     </el-row>
     <el-dialog
       title="添加素材"
       :visible.sync="dialogVisible"
-      width="52%"
+      width="33%"
       append-to-body= 'append-to-body'>
       <el-upload
         class="upload-demo"
         drag
-        action="http://api-toutiao-web.itheima.net/meterial/post"
+        action="http://api-toutiao-web.itheima.net/meterial/info"
         multiple>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -82,6 +81,19 @@ export default {
     // 点击收藏和全部进行切换
     radioClick () {
       this.isshow = !this.isshow
+    },
+    // 点击图片上收藏和删除
+    starClick (item) {
+      // console.log(item.is_collected)
+      item.is_collected = !item.is_collected
+    },
+    deleteImgClick (index) {
+      // console.log(this.imgs)
+      // console.log(index)
+      this.imgs.splice(index, 1)
+    },
+    deleteCimgClick (index) {
+      this.Cimgs.splice(index, 1)
     }
   }
 }

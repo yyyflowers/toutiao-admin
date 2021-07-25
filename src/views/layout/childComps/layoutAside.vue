@@ -1,12 +1,13 @@
 <template>
       <el-menu
         :uniqueOpened="true"
-        default-active="/home"
+        :default-active="$route.path"
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b"
         router
-        :collapse="isCollapse">
+        :collapse="isCollapse"
+        @select="select">
         <el-menu-item index="/home">
           <i class="el-icon-s-home"></i>
           <template #title>首页</template>
@@ -25,11 +26,11 @@
         </el-menu-item>
         <el-menu-item index="/comment">
           <i class="el-icon-edit-outline"></i>
-          <template #title>评论管理</template>
+          <template #title>评论统计</template>
         </el-menu-item>
         <el-menu-item index="/fans">
           <i class="el-icon-s-custom"></i>
-          <template #title>粉丝管理</template>
+          <template #title>粉丝统计</template>
         </el-menu-item>
         <el-menu-item index="/settings">
           <i class="el-icon-setting"></i>
@@ -43,6 +44,25 @@ export default {
   name: 'layoutAside',
   props: {
     isCollapse: Boolean
+  },
+  methods: {
+    select (index, indexPath) {
+      if (index === '/home') {
+        this.$router.push('/home')
+      } else if (index === '/content') {
+        this.$router.push('/content')
+      } else if (index === '/material') {
+        this.$router.push('/material')
+      } else if (index === '/publish') {
+        this.$router.push('/publish')
+      } else if (index === '/comment') {
+        this.$router.push('/comment')
+      } else if (index === '/fans') {
+        this.$router.push('/fans')
+      } else if (index === '/settings') {
+        this.$router.push('/settings')
+      }
+    }
   }
 }
 </script>

@@ -10,31 +10,24 @@
         </div>
       </template>
       <div class="text item">
-        <el-form ref="publish-form" :model="form" :rules="rules" label-width="60px">
-          <el-form-item label="标题" prop="title">
-            <el-input v-model="form.title"></el-input>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="标题" prop="name">
+            <el-input v-model="ruleForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="内容" prop="content">
-            <el-input type="textarea" v-model="form.content"></el-input>
-          </el-form-item>
-          <el-form-item label="封面" prop="cover">
-            <el-radio-group v-model="form.cover">
-              <el-radio label="1">单图</el-radio>
-              <el-radio label="3">三图</el-radio>
-              <el-radio label="0">无图</el-radio>
-              <el-radio label="-1">自动</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="频道" prop="channel">
-            <el-select v-model="form.channel" placeholder="请选择频道">
+          <el-form-item label="频道" prop="region">
+            <el-select v-model="ruleForm.region" placeholder="请选择频道">
+              <el-option label="vuejs" value="vuejs"></el-option>
+              <el-option label="html" value="html"></el-option>
+              <el-option label="css" value="css"></el-option>
               <el-option label="javascript" value="javascript"></el-option>
-              <el-option label="vue" value="vue"></el-option>
-              <el-option label="jquery" value="jquery"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="内容" prop="desc">
+            <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+          </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onPublish">发表</el-button>
-            <el-button @click="onDraft">存入草稿</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            <el-button @click="onDraft('ruleForm')">存入草稿</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -46,42 +39,68 @@
           stripe
           style="width: 100%">
           <el-table-column
-            label="封面"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="title"
+            prop="name"
             label="标题"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="content"
+            prop="region"
+            label="频道">
+          </el-table-column>
+          <el-table-column
+            prop="desc"
             label="内容"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="channel"
-            label="频道">
+            prop="time"
+            label="发布时间"
+            width="180">
           </el-table-column>
           <el-table-column
             label="操作"
             width="180">
-            <template>
+            <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="primary" icon="el-icon-edit"
-                circle></el-button>
+                circle
+                @click="editClick(scope.$index)"
+              ></el-button>
               <el-button
                 size="mini"
                 type="danger"
                 icon="el-icon-delete"
-                circle></el-button>
+                circle
+                @click="deleteClick(scope.$index)"
+              ></el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div v-else>您还没有发布文章</div>
     </el-card>
+    <el-dialog
+      title="编辑"
+      :visible.sync="dialogVisible"
+      width="40%"
+      :before-close="handleClose"
+      append-to-body>
+      <div class="text item">
+        <el-form :model="form" :rules="formRules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="标题" prop="name">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="内容" prop="desc">
+            <el-input type="textarea" v-model="form.desc"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+         <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogClick()">确 定</el-button>
+       </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -90,62 +109,116 @@ export default {
   name: 'publish',
   data () {
     return {
+      ruleForm: {
+        name: '',
+        region: '',
+        desc: '',
+        time: ''
+      },
       form: {
-        title: '', // 文章标题
-        content: '', // 文章内容
-        cover: {
-          type: 0, // 封面类型，-1自动 0无图 1一张 3三张
-          images: [] // 图片地址
-        },
-        channel: ['javascript', 'vue', 'jquery'] // 频道
+        name: '',
+        desc: ''
       },
       rules: {
-        title: [
-          { required: true, message: '请输入文章标题', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
-        content: [
-          { required: true, message: '请输入文章内容', trigger: 'blur' }
+        region: [
+          { required: true, message: '请选择频道', trigger: 'blur' }
         ],
-        cover: [
-          { type: 'date', required: true, message: '请选择封面类型', trigger: 'blur' }
+        desc: [
+          { required: true, message: '请填写内容', trigger: 'blur' }
+        ]
+      },
+      formRules: {
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
-        channel: [
-          { type: 'date', required: true, message: '请选择频道', trigger: 'change' }
+        desc: [
+          { required: true, message: '请填写内容', trigger: 'blur' }
         ]
       },
       essay: [],
-      key: null
+      num: 1000,
+      dialogVisible: false,
+      editIndex: null
     }
   },
   methods: {
     // 点击发布文章
-    onPublish () {
-      this.$refs['publish-form'].validate(valid => {
-      // this.$refs.from.validate((valid) => {
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        // 验证表单
         if (valid) {
+          // alert('submit!')
           this.$message({
             type: 'success',
             message: '发布成功!'
           })
+          // console.log(this.ruleForm)
+          const date = new Date()
+          this.ruleForm.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+          this.essay.splice(0, 0, JSON.parse(JSON.stringify(this.ruleForm)))
+          // console.log(this.essay)
+          this.ruleForm = {}
         } else {
+          // console.log('error submit!!')
+          this.$message({
+            type: 'error',
+            message: '发布失败!'
+          })
           return false
         }
       })
-      // 验证表单
-      this.key = this.form
-      this.essay.push(this.key)
     },
     // 点击存入草稿箱
-    onDraft () {
+    onDraft (formName) {
+      this.$refs[formName].resetFields()
       this.$message({
         type: 'success',
         message: '已存入草稿!'
       })
+    },
+    // 点击删除按钮
+    deleteClick (index) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        // console.log(index)
+        // console.log(this.essay)
+        this.essay.splice(index, 1)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleClose (done) {
+      this.$confirm('确认关闭？').then(_ => {
+        done()
+      }).catch(_ => {})
+    },
+    editClick (index) {
+      this.dialogVisible = true
+      this.editIndex = index
+      // console.log(this.editIndex)
+    },
+    dialogClick () {
+      this.dialogVisible = false
+      // console.log(this.form.name, this.form.desc, this.editIndex)
+      // console.log(this.essay)
+      this.essay[this.editIndex].name = this.form.name
+      this.essay[this.editIndex].desc = this.form.desc
     }
-    // created () {
-    //   this._getPublish()
-    // }
   }
 }
 </script>

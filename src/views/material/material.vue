@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import collect from '../../collect'
+import collect from './childComps/collect'
 export default {
   name: 'material',
   components: {

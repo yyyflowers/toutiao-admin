@@ -5,7 +5,7 @@
         <div class="card-header">
           <el-breadcrumb separator="/">
             <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item :to="{ path: '/comment' }">评论管理</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/comment' }">评论统计</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
       </template>

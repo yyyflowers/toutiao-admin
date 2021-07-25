@@ -10,34 +10,25 @@
       </div>
     </template>
     <div class="text item">
-      <el-form ref="form" :model="form" label-width="40px" size="mini">
-        <el-form-item label="状态">
+      <el-form ref="form" :model="form" :rules="rules" label-width="60px" size="mini">
+        <el-form-item label="状态" prop="resource">
           <el-radio-group v-model="form.resource">
-            <el-radio label="全部"></el-radio>
-            <el-radio label="草稿"></el-radio>
-            <el-radio label="待审核"></el-radio>
-            <el-radio label="审核通过"></el-radio>
-            <el-radio label="审核失败"></el-radio>
-            <el-radio label="已删除"></el-radio>
+            <el-radio label="-1">全部</el-radio>
+            <el-radio label="0">草稿</el-radio>
+            <el-radio label="1">待审核</el-radio>
+            <el-radio label="2">审核通过</el-radio>
+            <el-radio label="3">审核失败</el-radio>
+            <el-radio label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="频道">
+        <el-form-item label="频道" prop="region">
           <el-select v-model="form.region" placeholder="请选择频道">
             <el-option label="频道一" value="shanghai"></el-option>
             <el-option label="频道二" value="beijing"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="活动时间">
-          <el-date-picker
-            v-model="value1"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
-        </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="onSubmit('form')">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -45,7 +36,7 @@
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>根据筛选条件共查询到1000条数据</span>
+          <span>根据筛选条件共查询到{{count}}条数据</span>
         </div>
       </template>
       <div class="text item">
@@ -83,21 +74,27 @@
           <el-table-column
             label="操作"
             width="180">
-            <template>
+            <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="$router.push('/publish')">编辑</el-button>
+                @click="$router.push('/publish')"
+              >
+                编辑
+              </el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="deleteClick()">删除</el-button>
+                @click="deleteClick(scope.$index)"
+              >
+                删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
         <el-pagination
           background
           layout="prev, pager, next"
-          :total="1000"
+          :total="count"
           @current-change="pageClick"
         class="pagination">
         </el-pagination>
@@ -107,7 +104,7 @@
 </template>
 
 <script>
-import { getContent } from 'network/content'
+import { getContent, getStatus } from 'network/content'
 
 export default {
   name: 'content-management',
@@ -115,34 +112,88 @@ export default {
     return {
       form: {
         region: '',
-        date1: '',
-        date2: '',
         resource: ''
       },
-      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: '',
+      rules: {
+        region: [
+          { required: true, message: '请选择频道', trigger: 'blur' }
+        ],
+        resource: [
+          { required: true, message: '请选择状态', trigger: 'blur' }
+        ]
+      },
       collect: null,
       result: [],
-      loading: true
+      loading: true,
+      count: 0
     }
   },
   methods: {
     // 数据请求
     _getContent () {
       getContent().then(res => {
+        // console.log(res)
         this.collect = res.data.collect[0].result
         this.result = res.data.collect
+        this.count = this.result.length * 10
         // 关闭加载中
         this.loading = false
+        console.log(this.collect)
+        // console.log(this.result)
       })
     },
     // 监听事件
-    onSubmit () {
-      console.log('submit!')
+    // 点击查询按钮，对数据进行筛选
+    onSubmit (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // alert('submit!')
+          this.$message({
+            type: 'success',
+            message: '查询成功!'
+          })
+          this.loading = true
+          getStatus().then(res => {
+            // console.log(res.data
+            // console.log(typeof this.form.resource)
+            if (Number(this.form.resource) === -1) {
+              this.collect = res.data.a[0].result
+              this.result = res.data.a
+            } else if (Number(this.form.resource) === 0) {
+              this.collect = res.data.b[0].result
+              this.result = res.data.b
+            } else if (Number(this.form.resource) === 1) {
+              this.collect = res.data.c[0].result
+              this.result = res.data.c
+            } else if (Number(this.form.resource) === 2) {
+              this.collect = res.data.d[0].result
+              this.result = res.data.d
+            } else if (Number(this.form.resource) === 4) {
+              this.collect = res.data.f[0].result
+              this.result = res.data.f
+            } else if (Number(this.form.resource) === 3) {
+              this.collect = res.data.e[0].result
+              this.result = res.data.e
+            }
+            this.count = this.result.length * 10
+            // console.log(this.collect)
+            // console.log(this.result)
+            this.loading = false
+          })
+        } else {
+          alert('error submit!!')
+          this.$message({
+            type: 'error',
+            message: '查询失败!'
+          })
+          return false
+        }
+      })
     },
     // 点击页数更改展示数据
     pageClick (page) {
       this.collect = this.result[page - 1].result
+      // console.log(this.collect)
     },
     deleteClick (index) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -154,7 +205,9 @@ export default {
           type: 'success',
           message: '删除成功!'
         })
-        console.log(index)
+        this.count--
+        // console.log(index, this.collect)
+        this.collect.splice(index, 1)
       }).catch(() => {
         this.$message({
           type: 'info',

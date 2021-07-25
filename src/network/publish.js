@@ -1,7 +1,13 @@
 import { request } from './request'
-export function getPublish () {
+export function getSingle () {
   return request({
-    methods: 'post',
-    url: '/publish/article'
+    methods: 'get',
+    url: '/publish/article/single'
+  })
+}
+export function getDouble () {
+  return request({
+    methods: 'get',
+    url: '/publish/article/double'
   })
 }

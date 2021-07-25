@@ -37,30 +37,106 @@ Mock.mock(/\/content\/info\/get/, 'get', {
         }
       ]
     }
-  ],
-  'result|10': [
+  ]
+  // 'result|10': [
+  //   {
+  //     id: '@integer(11352545365465,90054352332356)',
+  //     images: '@dataImage(120x90)',
+  //     title: '@ctitle( 7, 12 )',
+  //     status: '@natural(0,4)',
+  //     pubDate: '@datetime()'
+  //   }
+  // ]
+})
+
+Mock.mock(RegExp('/content/info' + '.*'), 'get', {
+  'a|100': [
     {
-      id: '@integer(11352545365465,90054352332356)',
-      images: '@dataImage(120x90)',
-      title: '@ctitle( 7, 12 )',
-      status: '@natural(0,4)',
-      pubDate: '@datetime()'
+      page: '@increment(1)',
+      'result|10': [
+        {
+          id: '@integer(11352545365465,90054352332356)',
+          images: '@dataImage(120x90)',
+          title: '@ctitle( 7, 12 )',
+          status: '@natural(0,4)',
+          pubDate: '@datetime()'
+        }
+      ]
+    }
+  ],
+  'b|20': [
+    {
+      page: '@increment(1)',
+      'result|10': [
+        {
+          id: '@integer(11352545365465,90054352332356)',
+          images: '@dataImage(120x90)',
+          title: '@ctitle( 7, 12 )',
+          status: 0,
+          pubDate: '@datetime()'
+        }
+      ]
+    }
+  ],
+  'c|30': [
+    {
+      page: '@increment(1)',
+      'result|10': [
+        {
+          id: '@integer(11352545365465,90054352332356)',
+          images: '@dataImage(120x90)',
+          title: '@ctitle( 7, 12 )',
+          status: 1,
+          pubDate: '@datetime()'
+        }
+      ]
+    }
+  ],
+  'd|10': [
+    {
+      page: '@increment(1)',
+      'result|10': [
+        {
+          id: '@integer(11352545365465,90054352332356)',
+          images: '@dataImage(120x90)',
+          title: '@ctitle( 7, 12 )',
+          status: 2,
+          pubDate: '@datetime()'
+        }
+      ]
+    }
+  ],
+  'e|30': [
+    {
+      page: '@increment(1)',
+      'result|10': [
+        {
+          id: '@integer(11352545365465,90054352332356)',
+          images: '@dataImage(120x90)',
+          title: '@ctitle( 7, 12 )',
+          status: 3,
+          pubDate: '@datetime()'
+        }
+      ]
+    }
+  ],
+  'f|10': [
+    {
+      page: '@increment(1)',
+      'result|10': [
+        {
+          id: '@integer(11352545365465,90054352332356)',
+          images: '@dataImage(120x90)',
+          title: '@ctitle( 7, 12 )',
+          status: 4,
+          pubDate: '@datetime()'
+        }
+      ]
     }
   ]
 })
 
 // 发布文章
-// Mock.mock(/\/publish\/article/, 'post', {
-//   name: '橙',
-//   id: 1,
-//   photo: 'https://img0.baidu.com/it/u=3311900507,1448170316&fm=26&fmt=auto&gp=0.jpg',
-//   mobile: '13911111111'
-// })
-
-// Mock.mock(/\/publish\/article/, 'post', {
-//   name: '橙橙橙',
-//   id: 1
-// })
 
 // 素材管理的获取
 Mock.mock(/\/material\/info/, 'get', {
