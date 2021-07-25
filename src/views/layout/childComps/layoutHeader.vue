@@ -36,7 +36,7 @@ export default {
   },
   mounted () {
     this.$bus.$on('onSubmit', data => {
-      console.log(data)
+      // console.log(data)
       this.user.name = data.name
       this.user.photo = data.photo
     })
