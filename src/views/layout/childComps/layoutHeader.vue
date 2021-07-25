@@ -12,7 +12,7 @@
       </div>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item icon="el-icon-s-tools">个人设置</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-s-tools" @click.native="$router.push('/settings')">个人设置</el-dropdown-item>
           <el-dropdown-item icon="el-icon-s-opportunity" @click.native="dropClick()">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>

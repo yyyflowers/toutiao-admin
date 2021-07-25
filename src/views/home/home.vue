@@ -50,7 +50,7 @@ export default {
     var myChart = echarts.init(this.$refs.main)
     var option = {
       title: {
-        text: '折线图堆叠'
+        text: '推广方式'
       },
       tooltip: {
         trigger: 'axis'

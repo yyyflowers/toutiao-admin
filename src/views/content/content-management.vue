@@ -138,7 +138,7 @@ export default {
         this.count = this.result.length * 10
         // 关闭加载中
         this.loading = false
-        console.log(this.collect)
+        // console.log(this.collect)
         // console.log(this.result)
       })
     },

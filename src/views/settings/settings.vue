@@ -106,9 +106,9 @@ export default {
     // 点击事件
     // 点击保存按钮
     onSubmit () {
-      console.log('submit!')
+      // console.log('submit!')
       this.form = this.user
-      console.log(this.form)
+      // console.log(this.form)
       this.$bus.$emit('onSubmit', this.form)
     },
     // 点击头像进行修改,弹出文件选择框，在确认改变后弹出dialog
@@ -138,7 +138,7 @@ export default {
       this.cropper.getCroppedCanvas().toBlob(file => {
         // const formData = new FormData()
         // formData.append('photo', file)
-        console.log(file)
+        // console.log(file)
         // 更新视图
         this.user.photo = window.URL.createObjectURL(file)
         // 关闭对话框

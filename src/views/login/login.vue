@@ -79,7 +79,7 @@ export default {
         // 路由跳转到首页
         this.$router.push('/home')
       }).catch(erro => {
-        console.log(erro)
+        // console.log(erro)
         this.$message({
           message: '登录失败',
           type: 'error'
